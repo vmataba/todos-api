@@ -48,7 +48,7 @@ public class TaskController {
         Task savedTask = optionalTask.get();
         savedTask.setDescription(task.getDescription());
         savedTask.setStatus(task.getStatus());
-        return savedTask;
+        return taskRepository.save(savedTask);
     }
 
     @DeleteMapping(path = "/{id}")
