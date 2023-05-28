@@ -32,6 +32,10 @@ public class Task {
     @JsonIgnore
     private Listing listing;
 
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY,namespace = "listing_id")
+    private Long listingId;
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -72,5 +76,9 @@ public class Task {
 
     public void setListing(Listing listing) {
         this.listing = listing;
+    }
+
+    public Long getListingId() {
+        return listing.getId();
     }
 }

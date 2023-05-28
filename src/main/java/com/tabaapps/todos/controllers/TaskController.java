@@ -1,10 +1,14 @@
 package com.tabaapps.todos.controllers;
 
+import com.tabaapps.todos.models.Label;
 import com.tabaapps.todos.models.Listing;
 import com.tabaapps.todos.models.Task;
+import com.tabaapps.todos.repositories.LabelRepository;
 import com.tabaapps.todos.repositories.ListingRepository;
 import com.tabaapps.todos.repositories.TaskRepository;
+import com.tabaapps.todos.security.ResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,6 +18,9 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "/api/tasks")
 public class TaskController {
+
+    @Autowired
+    private LabelRepository labelRepository;
     @Autowired
     private ListingRepository listingRepository;
 
@@ -61,5 +68,15 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(path = "/by-label/{labelId}")
+    public ResponseEntity<?> findByLabel(@PathVariable Long labelId) throws Exception{
+        Optional<Label> optionalLabel = labelRepository.findById(labelId);
+        if (optionalLabel.isEmpty()){
+            throw new ResponseException("Label is not found", HttpStatus.NOT_FOUND);
+        }
+        Label label = optionalLabel.get();
+        List<Task> tasks  = taskRepository.findByListingLabel(label);
+        return ResponseEntity.ok(tasks);
+    }
 }
 
