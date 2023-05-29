@@ -62,10 +62,10 @@ public class TaskController {
     public ResponseEntity<?> deleteTask(@PathVariable Long id) throws Exception {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()) {
-            throw new Exception("Task is not found");
+            throw new ResponseException("Task is not found",HttpStatus.NOT_FOUND);
         }
         taskRepository.delete(optionalTask.get());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(id);
     }
 
     @GetMapping(path = "/by-label/{labelId}")
