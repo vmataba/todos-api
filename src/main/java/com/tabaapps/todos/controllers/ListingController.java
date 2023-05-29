@@ -36,7 +36,7 @@ public class ListingController {
     public Listing addNewListing(@PathVariable Long labelId, @RequestBody Listing listing) throws Exception {
         Optional<Label> optionalLabel = labelRepository.findById(labelId);
         if (optionalLabel.isEmpty()) {
-            throw new Exception("Label is not found");
+           throw new ResponseException("Label is not found",HttpStatus.NOT_FOUND);
         }
         listing.setLabel(optionalLabel.get());
         return listingRepository.save(listing);
@@ -61,7 +61,7 @@ public class ListingController {
             throw new ResponseException("Listing is not found",HttpStatus.NOT_FOUND);
         }
         listingRepository.delete(optionalListing.get());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(id);
     }
 
 }
