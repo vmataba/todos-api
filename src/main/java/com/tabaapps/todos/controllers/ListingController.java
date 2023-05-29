@@ -4,7 +4,9 @@ import com.tabaapps.todos.models.Label;
 import com.tabaapps.todos.models.Listing;
 import com.tabaapps.todos.repositories.LabelRepository;
 import com.tabaapps.todos.repositories.ListingRepository;
+import com.tabaapps.todos.security.ResponseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,19 +46,19 @@ public class ListingController {
     public Listing updateListing(@PathVariable Long id, @RequestBody Listing listing) throws Exception {
         Optional<Listing> optionalListing = listingRepository.findById(id);
         if (optionalListing.isEmpty()) {
-            throw new Exception("Listing is not found");
+            throw new ResponseException("Listing is not found", HttpStatus.NOT_FOUND);
         }
         Listing savedListing = optionalListing.get();
         savedListing.setTitle(listing.getTitle());
         savedListing.setStatus(listing.getStatus());
-        return savedListing;
+        return listingRepository.save(savedListing);
     }
 
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> deleteListing(@PathVariable Long id) throws Exception {
         Optional<Listing> optionalListing = listingRepository.findById(id);
         if (optionalListing.isEmpty()) {
-            throw new Exception("Listing is not found");
+            throw new ResponseException("Listing is not found",HttpStatus.NOT_FOUND);
         }
         listingRepository.delete(optionalListing.get());
         return ResponseEntity.noContent().build();
