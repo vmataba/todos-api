@@ -40,7 +40,7 @@ public class TaskController {
     public Task addNewTask(@PathVariable Long listingId, @RequestBody Task task) throws Exception {
         Optional<Listing> optionalListing = listingRepository.findById(listingId);
         if (optionalListing.isEmpty()) {
-            throw new Exception("Listing is not found");
+            throw new ResponseException("Listing is not found");
         }
         task.setListing(optionalListing.get());
         return taskRepository.save(task);
@@ -50,7 +50,7 @@ public class TaskController {
     public Task updateTask(@PathVariable Long id, @RequestBody Task task) throws Exception {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()) {
-            throw new Exception("Task is not found");
+            throw new ResponseException("Task is not found");
         }
         Task savedTask = optionalTask.get();
         savedTask.setDescription(task.getDescription());
