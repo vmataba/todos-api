@@ -22,6 +22,11 @@ public class LabelController {
     @Autowired
     private UserRepository userRepository;
 
+    @GetMapping("")
+    public List<Label> viewAll(){
+        return this.labelRepository.findAll();    
+    }
+
     @GetMapping(path = "/{userId}")
     public List<Label> viewLabels(@PathVariable Long userId) throws Exception {
          Optional<User> optionalUser = userRepository.findById(userId);

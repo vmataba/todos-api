@@ -3,19 +3,17 @@ package com.tabaapps.todos.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class Label {
+@Setter
+@Getter
+public class Label extends BaseModel {
 
-    public Label(){
-        setCreatedAt();
-    }
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
     @Column(nullable = false, unique = true)
     private String name;
 
@@ -30,36 +28,4 @@ public class Label {
     @OneToMany(mappedBy = "label")
     private List<Listing> listings;
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-
-    public List<Listing> getListings() {
-        return listings;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
 }
