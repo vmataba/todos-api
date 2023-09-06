@@ -3,20 +3,26 @@ package com.tabaapps.todos.controllers;
 import com.tabaapps.todos.models.User;
 import com.tabaapps.todos.repositories.UserRepository;
 import com.tabaapps.todos.security.ResponseException;
+import com.tabaapps.todos.security.Security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/users")
+@CrossOrigin("*")
 public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private Security security;
 
 
     @GetMapping
@@ -44,14 +50,14 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<User> login(@RequestBody User user) throws Exception {
-        User savedUser = userRepository.findByEmail(user.getEmail());
-        if (savedUser == null) {
+    public ResponseEntity<?> login(@RequestHeader("Authorization") String credentials) throws ResponseException {
+        byte[] credentialsBytes = Base64.getDecoder().decode(credentials.replace("Basic ", ""));
+        String textCredentials = new String(credentialsBytes);
+        String[] textCredentialsBundle = textCredentials.split(":");
+        User user = userRepository.findByEmail(textCredentialsBundle[0]).orElseThrow(() -> new ResponseException("Incorrect user name or password", HttpStatus.BAD_REQUEST));
+        if (!security.getPasswordEncoder().matches(textCredentialsBundle[1], user.getPassword())) {
             throw new ResponseException("Incorrect username or password", HttpStatus.BAD_REQUEST);
         }
-        if (!savedUser.getPassword().equals(user.getPassword())) {
-            throw new ResponseException("Incorrect username or password",HttpStatus.BAD_REQUEST);
-        }
-        return ResponseEntity.ok(savedUser);
+        return ResponseEntity.ok(user);
     }
 }

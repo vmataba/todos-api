@@ -2,11 +2,15 @@ package com.tabaapps.todos.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.List;
 
 @Entity
@@ -28,6 +32,7 @@ public class User extends BaseModel {
 
     @Column(nullable = false, unique = true)
     private String email;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
@@ -35,5 +40,4 @@ public class User extends BaseModel {
     @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Label> labels;
-
 }
