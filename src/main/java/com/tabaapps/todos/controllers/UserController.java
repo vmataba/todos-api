@@ -15,7 +15,6 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping(path = "/api/users")
-@CrossOrigin("*")
 public class UserController {
 
     @Autowired
@@ -50,7 +49,7 @@ public class UserController {
     }
 
     @PostMapping(path = "/login")
-    public ResponseEntity<?> login(@RequestHeader("Authorization") String credentials) throws ResponseException {
+    public ResponseEntity<?> login(@RequestBody String credentials) throws ResponseException {
         byte[] credentialsBytes = Base64.getDecoder().decode(credentials.replace("Basic ", ""));
         String textCredentials = new String(credentialsBytes);
         String[] textCredentialsBundle = textCredentials.split(":");
@@ -59,5 +58,10 @@ public class UserController {
             throw new ResponseException("Incorrect username or password", HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping(path = "/say-something")
+    public String saySomething(){
+        return "Hello all!";
     }
 }
