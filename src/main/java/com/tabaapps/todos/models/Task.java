@@ -30,8 +30,8 @@ public class Task extends BaseModel{
     @JsonIgnore
     private Listing listing;
 
-    @Transient
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY,namespace = "listing_id")
-    private Long listingId;
+    public Long getListingId(){
+        return this.listing.getId();
+    }
 
 }

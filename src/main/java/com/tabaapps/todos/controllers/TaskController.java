@@ -62,21 +62,16 @@ public class TaskController {
     public ResponseEntity<?> deleteTask(@PathVariable Long id) throws Exception {
         Optional<Task> optionalTask = taskRepository.findById(id);
         if (optionalTask.isEmpty()) {
-            throw new ResponseException("Task is not found",HttpStatus.NOT_FOUND);
+            throw new ResponseException("Task is not found", HttpStatus.NOT_FOUND);
         }
         taskRepository.delete(optionalTask.get());
         return ResponseEntity.ok(id);
     }
 
     @GetMapping(path = "/by-label/{labelId}")
-    public ResponseEntity<?> findByLabel(@PathVariable Long labelId) throws Exception{
-        Optional<Label> optionalLabel = labelRepository.findById(labelId);
-        if (optionalLabel.isEmpty()){
-            throw new ResponseException("Label is not found", HttpStatus.NOT_FOUND);
-        }
-        Label label = optionalLabel.get();
-        List<Task> tasks  = taskRepository.findByListingLabel(label);
-        return ResponseEntity.ok(tasks);
+    public ResponseEntity<?> findByLabel(@PathVariable Long labelId) throws ResponseException {
+        Label label = labelRepository.findById(labelId).orElseThrow(() -> new ResponseException("Label is not found", HttpStatus.NOT_FOUND));
+        return ResponseEntity.ok(taskRepository.findByLabel(label));
     }
 }
 
