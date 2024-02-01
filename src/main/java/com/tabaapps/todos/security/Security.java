@@ -10,48 +10,24 @@ import org.springframework.security.config.annotation.web.configurers.AbstractAu
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationEntryPoint;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 @Configuration
 @EnableWebSecurity
 public class Security {
 
-    public static String hashPassword(String password) {
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("SHA-256");
-            byte[] hashedBytes = messageDigest.digest(password.getBytes(StandardCharsets.UTF_8));
-            return Base64.getEncoder().encodeToString(hashedBytes);
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    @Bean
-    public AuthenticationEntryPoint generateEntryPoint() {
-        BasicAuthenticationEntryPoint entryPoint = new BasicAuthenticationEntryPoint();
-        entryPoint.setRealmName("Todos App");
-        return entryPoint;
-    }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(customizer -> {
-            customizer.requestMatchers("/api/users/login", "/api/users/signup", "/error","/api/users/say-something").permitAll()
+            customizer.requestMatchers("/api/users/login", "/api/users/signup", "/error","/api/users/say-something","/dummy/**").permitAll()
                     .anyRequest().authenticated();
+           // customizer.anyRequest().permitAll();
         });
         httpSecurity.cors(AbstractHttpConfigurer::disable);
         httpSecurity.httpBasic(Customizer.withDefaults());
-        httpSecurity.formLogin(AbstractHttpConfigurer::disable);
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         httpSecurity.formLogin(AbstractAuthenticationFilterConfigurer::disable);
+        //httpSecurity.addFilter(new JwtF)
         return httpSecurity.build();
     }
 
